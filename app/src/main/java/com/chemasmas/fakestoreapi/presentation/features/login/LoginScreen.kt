@@ -1,9 +1,13 @@
 package com.chemasmas.fakestoreapi.presentation.features.login
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.chemasmas.fakestoreapi.core.designSystem.previewsConfig.PhonePreview
 import com.chemasmas.fakestoreapi.ui.theme.FakeStoreAPiTheme
 
 @Composable
@@ -16,13 +20,19 @@ fun LoginScreenContainer(
 
 @Composable
 fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colors.surface
+    ) {
+        Text(text = "Hello $name!")
+    }
 }
 
-@Preview(showBackground = true)
+
+@PhonePreview
 @Composable
-fun DefaultPreview() {
+fun LoadingScreenPreview() {
     FakeStoreAPiTheme {
-        Greeting("Android")
+        Greeting("FakeStoreApplication")
     }
 }
