@@ -1,6 +1,7 @@
 package com.chemasmas.fakestoreapi.presentation.features.login
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
+import com.chemasmas.fakestoreapi.R
 import com.chemasmas.fakestoreapi.core.config.DispatchersSource
 import com.chemasmas.fakestoreapi.core.domain.MakeLoginUseCase
 import com.chemasmas.fakestoreapi.core.domain.ValidateEmailUseCase
@@ -47,7 +48,7 @@ class LoginViewModelTest {
         viewModel.makeLogin(email = "", password = "")
         dispatcher.scheduler.advanceUntilIdle()
         val invalidEmail = viewModel.invalidEmail.value
-        assertEquals("The email doesn't accomplish with the format", invalidEmail)
+        assertEquals(R.string.invalid_email, invalidEmail)
     }
 
     @Test
@@ -55,7 +56,7 @@ class LoginViewModelTest {
         viewModel.makeLogin(email = "someEmail@gmail.", password = "")
         dispatcher.scheduler.advanceUntilIdle()
         val invalidEmail = viewModel.invalidEmail.value
-        assertEquals("The email doesn't accomplish with the format", invalidEmail)
+        assertEquals(R.string.invalid_email, invalidEmail)
     }
 
     @Test
@@ -63,7 +64,7 @@ class LoginViewModelTest {
         viewModel.makeLogin(email = "someEmail@gmail.com", password = "")
         dispatcher.scheduler.advanceUntilIdle()
         val invalidPassword = viewModel.invalidPassword.value
-        assertEquals("The password is required", invalidPassword)
+        assertEquals(R.string.invalid_password, invalidPassword)
     }
 
     @Test
