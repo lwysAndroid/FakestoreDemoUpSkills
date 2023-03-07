@@ -52,15 +52,26 @@ class LoginViewModelTest {
 
     @Test
     fun `Login with invalid email`() {
-//            assertEquals(false, it)
+        viewModel.makeLogin(email = "someEmail@gmail.", password = "")
+        dispatcher.scheduler.advanceUntilIdle()
+        val invalidEmail = viewModel.invalidEmail.value
+        assertEquals("The email doesn't accomplish with the format", invalidEmail)
     }
 
     @Test
     fun `Login with empty password`() {
+        viewModel.makeLogin(email = "someEmail@gmail.com", password = "")
+        dispatcher.scheduler.advanceUntilIdle()
+        val invalidPassword = viewModel.invalidPassword.value
+        assertEquals("The password is required", invalidPassword)
     }
 
     @Test
     fun `Correct login`() {
+        viewModel.makeLogin(email = "someEmail@gmail.com", password = "1234password")
+        dispatcher.scheduler.advanceUntilIdle()
+        val successLogin = viewModel.succeedLogin.value
+        assertEquals(true, successLogin)
     }
 
 }
