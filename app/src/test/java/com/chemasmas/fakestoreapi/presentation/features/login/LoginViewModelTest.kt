@@ -6,6 +6,7 @@ import com.chemasmas.fakestoreapi.core.config.DispatchersSource
 import com.chemasmas.fakestoreapi.core.domain.MakeLoginUseCase
 import com.chemasmas.fakestoreapi.core.domain.ValidateEmailUseCase
 import com.chemasmas.fakestoreapi.core.domain.ValidatePasswordUseCase
+import com.chemasmas.fakestoreapi.presentation.features.login.mocks.MakeLoginRepositoryMock
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,11 +32,13 @@ class LoginViewModelTest {
             get() = dispatcher
     }
 
+    private val makeLoginRepositoryMock = MakeLoginRepositoryMock()
+
     private val viewModel = LoginViewModel(
         dispatchersSource = dispatchersSource,
         validateEmailUseCase = ValidateEmailUseCase(),
         validatePasswordUseCase = ValidatePasswordUseCase(),
-        makeLoginUseCase = MakeLoginUseCase(),
+        makeLoginUseCase = MakeLoginUseCase(makeLoginRepositoryMock),
     )
 
     @Before

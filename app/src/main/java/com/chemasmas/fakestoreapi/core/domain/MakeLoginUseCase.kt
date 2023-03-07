@@ -1,13 +1,15 @@
 package com.chemasmas.fakestoreapi.core.domain
 
+import com.chemasmas.fakestoreapi.core.data.repository.MakeLoginRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class MakeLoginUseCase @Inject constructor() {
+class MakeLoginUseCase @Inject constructor(
+    private val makeLoginRepository: MakeLoginRepository,
+) {
 
-    operator fun invoke(email: String, password: String): Flow<Boolean> = flow {
-        emit(true)
+    operator fun invoke(email: String, password: String): Flow<Boolean> {
+        return makeLoginRepository.makeLogin(email = email, password = password)
     }
 
 }
