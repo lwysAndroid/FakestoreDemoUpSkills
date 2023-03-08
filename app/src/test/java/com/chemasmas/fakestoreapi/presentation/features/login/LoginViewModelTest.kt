@@ -3,6 +3,7 @@ package com.chemasmas.fakestoreapi.presentation.features.login
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import com.chemasmas.fakestoreapi.R
 import com.chemasmas.fakestoreapi.core.config.DispatchersSource
+import com.chemasmas.fakestoreapi.core.designSystem.models.ScreenState
 import com.chemasmas.fakestoreapi.core.domain.MakeLoginUseCase
 import com.chemasmas.fakestoreapi.core.domain.ValidateEmailUseCase
 import com.chemasmas.fakestoreapi.core.domain.ValidatePasswordUseCase
@@ -74,8 +75,9 @@ class LoginViewModelTest {
     fun `Correct login`() {
         viewModel.makeLogin(email = "someEmail@gmail.com", password = "1234password")
         dispatcher.scheduler.advanceUntilIdle()
-        val successLogin = viewModel.succeedLogin.value
-        assertEquals(true, successLogin)
+        val successLogin = viewModel.loginScreenState.value
+        successLogin.javaClass
+        assertEquals(ScreenState.Success(Any()).javaClass, successLogin.javaClass)
     }
 
 }
