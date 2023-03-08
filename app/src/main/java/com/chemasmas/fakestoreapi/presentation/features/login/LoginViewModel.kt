@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chemasmas.fakestoreapi.R
 import com.chemasmas.fakestoreapi.core.config.DispatchersSource
+import com.chemasmas.fakestoreapi.core.designSystem.models.ScreenState
 import com.chemasmas.fakestoreapi.core.domain.MakeLoginUseCase
 import com.chemasmas.fakestoreapi.core.domain.ValidateEmailUseCase
 import com.chemasmas.fakestoreapi.core.domain.ValidatePasswordUseCase
+import com.chemasmas.fakestoreapi.presentation.features.login.model.LoginScreenDataModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,7 +33,13 @@ class LoginViewModel @Inject constructor(
     private val _succeedLogin = MutableStateFlow<Boolean>(false)
     val succeedLogin get() = _succeedLogin.asStateFlow()
 
+    private val _loginScreenState =
+        MutableStateFlow<ScreenState<LoginScreenDataModel>>(ScreenState.Default)
+    val loginScreenState get() = _loginScreenState.asStateFlow()
+
+
     fun makeLogin(email: String, password: String) {
+
         viewModelScope.launch(dispatchersSource.io) {
             try {
                 var isValidEmail = false
@@ -42,6 +50,7 @@ class LoginViewModel @Inject constructor(
                     _invalidEmail.value = R.string.invalid_email
                     return@launch
                 }
+                _invalidEmail.value = 0
 
                 var isValidPassword = false
                 validatePasswordUseCase(password).collectLatest {
@@ -51,9 +60,14 @@ class LoginViewModel @Inject constructor(
                     _invalidPassword.value = R.string.invalid_password
                     return@launch
                 }
+                _invalidPassword.value = 0
+
+                _loginScreenState.value = ScreenState.Loading
 
                 makeLoginUseCase(email = email, password = password).collectLatest {
                     _succeedLogin.value = it
+                    _loginScreenState.value =
+                        ScreenState.Success(data = LoginScreenDataModel(data = ""))
                 }
 
             } catch (exc: Exception) {
