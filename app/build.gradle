@@ -3,7 +3,18 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
+    id 'com.apollographql.apollo3'
 }
+
+apollo {
+    service("service") {
+        packageName.set("com.chemasmas")
+    }
+}
+/*
+Command to download the schema
+./gradlew :app:downloadApolloSchema --endpoint='https://countries.trevorblades.com/graphql' --schema=app/src/main/graphql/countries/schema.graphqls
+*/
 
 android {
     namespace 'com.chemasmas.fakestoreapi'
@@ -58,6 +69,8 @@ dependencies {
     implementation 'androidx.compose.material:material:1.2.0'
 
     implementation 'com.google.accompanist:accompanist-insets:0.23.1'
+    //apollo
+    implementation 'com.apollographql.apollo3:apollo-runtime:3.7.3'
 
     implementation "com.google.dagger:hilt-android:2.44"
     kapt "com.google.dagger:hilt-compiler:2.44"
