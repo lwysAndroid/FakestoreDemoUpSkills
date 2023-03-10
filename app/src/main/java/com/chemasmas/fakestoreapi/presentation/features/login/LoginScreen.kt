@@ -18,6 +18,7 @@ import com.chemasmas.fakestoreapi.core.designSystem.components.LoadingScreen
 import com.chemasmas.fakestoreapi.core.designSystem.components.TextInput
 import com.chemasmas.fakestoreapi.core.designSystem.models.ScreenState
 import com.chemasmas.fakestoreapi.core.designSystem.previewsConfig.PhonePreview
+import com.chemasmas.fakestoreapi.presentation.theme.FakeStoreAPiTheme
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 
@@ -47,17 +48,13 @@ fun LoginScreenContainer(
                 invalidPasswordState = invalidPasswordState,
             )
         }
-        is ScreenState.Success->{
+        is ScreenState.Success -> {
             Text(text = context.getString(R.string.next_screen))
         }
         is ScreenState.Error -> {
             //TODO Handled Errors
         }
     }
-
-
-
-
 
 }
 
@@ -75,55 +72,53 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.secondary) {
-        ProvideWindowInsets {
-            Column(
-                Modifier
-                    .navigationBarsWithImePadding()
-                    .padding(24.dp)
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(
-                    16.dp, alignment = Alignment.CenterVertically
-                ),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                TextInput(InputType.Name, keyboardActions = KeyboardActions(onNext = {
-                    passwordFocusRequester.requestFocus()
-                }), onValueChange = { value ->
-                    email = value
-                })
+    ProvideWindowInsets {
+        Column(
+            Modifier
+                .navigationBarsWithImePadding()
+                .padding(24.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(
+                16.dp, alignment = Alignment.CenterVertically
+            ),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TextInput(InputType.Name, keyboardActions = KeyboardActions(onNext = {
+                passwordFocusRequester.requestFocus()
+            }), onValueChange = { value ->
+                email = value
+            })
 
-                if (invalidEmailState != 0) {
-                    Text(text = context.getString(invalidEmailState))
-                }
+            if (invalidEmailState != 0) {
+                Text(text = context.getString(invalidEmailState))
+            }
 
-                TextInput(InputType.Password,
-                    keyboardActions = KeyboardActions(onDone = {
-                        focusManager.clearFocus()
-                        doLogin(email, password)
-                    }),
-                    focusRequester = passwordFocusRequester,
-                    onValueChange = { value -> password = value })
-
-                if (invalidPasswordState != 0) {
-                    Text(text = context.getString(invalidPasswordState))
-                }
-
-                Button(onClick = {
+            TextInput(InputType.Password,
+                keyboardActions = KeyboardActions(onDone = {
+                    focusManager.clearFocus()
                     doLogin(email, password)
-                }, modifier = Modifier.fillMaxWidth()) {
-                    Text("SIGN IN", Modifier.padding(vertical = 8.dp))
-                }
-                Divider(
-                    color = Color.White.copy(alpha = 0.3f),
-                    thickness = 1.dp,
-                    modifier = Modifier.padding(top = 48.dp)
-                )
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Don't have an account?", color = Color.White)
-                    TextButton(onClick = {}) {
-                        Text("SING UP")
-                    }
+                }),
+                focusRequester = passwordFocusRequester,
+                onValueChange = { value -> password = value })
+
+            if (invalidPasswordState != 0) {
+                Text(text = context.getString(invalidPasswordState))
+            }
+
+            Button(onClick = {
+                doLogin(email, password)
+            }, modifier = Modifier.fillMaxWidth()) {
+                Text("SIGN IN", Modifier.padding(vertical = 8.dp))
+            }
+            Divider(
+                color = Color.White.copy(alpha = 0.3f),
+                thickness = 1.dp,
+                modifier = Modifier.padding(top = 48.dp)
+            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Don't have an account?", color = Color.White)
+                TextButton(onClick = {}) {
+                    Text("SING UP")
                 }
             }
         }
@@ -134,7 +129,14 @@ fun LoginScreen(
 @PhonePreview
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(
-        invalidEmailState = R.string.invalid_email
-    )
+    FakeStoreAPiTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colors.background
+        ) {
+            LoginScreen(
+                invalidEmailState = R.string.invalid_email
+            )
+        }
+    }
 }
