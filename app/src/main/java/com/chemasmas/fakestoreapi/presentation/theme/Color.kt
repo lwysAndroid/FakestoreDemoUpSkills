@@ -1,4 +1,4 @@
-package com.chemasmas.fakestoreapi.ui.theme
+package com.chemasmas.fakestoreapi.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
