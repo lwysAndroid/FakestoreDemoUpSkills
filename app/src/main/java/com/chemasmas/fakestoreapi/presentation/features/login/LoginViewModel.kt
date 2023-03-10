@@ -1,7 +1,10 @@
 package com.chemasmas.fakestoreapi.presentation.features.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.apollographql.apollo3.ApolloClient
+import com.chemasmas.CountriesQuery
 import com.chemasmas.fakestoreapi.R
 import com.chemasmas.fakestoreapi.core.config.DispatchersSource
 import com.chemasmas.fakestoreapi.core.designSystem.models.ScreenState
@@ -35,7 +38,7 @@ class LoginViewModel @Inject constructor(
 
 
     fun makeLogin(email: String, password: String) {
-
+        testGraphQLCall()
         viewModelScope.launch(dispatchersSource.io) {
             try {
                 var isValidEmail = false
@@ -69,6 +72,23 @@ class LoginViewModel @Inject constructor(
                 //TODO handled exceptions
             }
 
+        }
+    }
+
+    private val apolloClient = ApolloClient.Builder()
+        .serverUrl("https://countries.trevorblades.com/graphql")
+        .build()
+
+    fun testGraphQLCall() {
+        /*TODO this call to the graphQL service should be move to the data layer in a remote data
+        *  source an then all the missing layers required to retrieve the data should be built,
+        *  like the repository, the use cases, the models for each layer, the mappers, etc. also
+        *  all the dependencies should be supplied using hilt
+        */
+        viewModelScope.launch {
+            val response = apolloClient.query(CountriesQuery()).execute()
+            Log.d("LaunchList", "Success ${response.data}")
+            //Country(name=Antigua and Barbuda, capital=Saint John's, code=AG, emoji=🇦🇬)
         }
     }
 
