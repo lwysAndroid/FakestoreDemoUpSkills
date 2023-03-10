@@ -12,28 +12,28 @@ class ValidateEmailUseCaseTest {
 
     @Test
     fun `Empty email`() = runTest {
-        validateEmailUseCase("").collectLatest {
+        validateEmailUseCase.execute("").collectLatest {
             assertEquals(false, it)
         }
     }
 
     @Test
     fun `Incomplete email`() = runTest {
-        validateEmailUseCase("someEmail").collectLatest {
+        validateEmailUseCase.execute("someEmail").collectLatest {
             assertEquals(false, it)
         }
     }
 
     @Test
     fun `Incomplete email without com`() = runTest {
-        validateEmailUseCase("someEmail@gmail.").collectLatest {
+        validateEmailUseCase.execute("someEmail@gmail.").collectLatest {
             assertEquals(false, it)
         }
     }
 
     @Test
     fun `Correct email`() = runTest {
-        validateEmailUseCase("someEmail@gmail.com").collectLatest {
+        validateEmailUseCase.execute("someEmail@gmail.com").collectLatest {
             assertEquals(true, it)
         }
     }

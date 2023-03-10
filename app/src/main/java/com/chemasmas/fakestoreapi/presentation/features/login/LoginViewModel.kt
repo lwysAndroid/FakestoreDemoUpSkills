@@ -42,7 +42,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch(dispatchersSource.io) {
             try {
                 var isValidEmail = false
-                validateEmailUseCase(email).collect() {
+                validateEmailUseCase.execute(email).collect() {
                     isValidEmail = it
                 }
                 if (isValidEmail.not()) {
@@ -52,7 +52,7 @@ class LoginViewModel @Inject constructor(
                 _invalidEmail.value = 0
 
                 var isValidPassword = false
-                validatePasswordUseCase(password).collectLatest {
+                validatePasswordUseCase.execute(password).collectLatest {
                     isValidPassword = it
                 }
                 if (isValidPassword.not()) {
@@ -63,7 +63,7 @@ class LoginViewModel @Inject constructor(
 
                 _loginScreenState.value = ScreenState.Loading
 
-                makeLoginUseCase(email = email, password = password).collectLatest {
+                makeLoginUseCase.execute(email = email, password = password).collectLatest {
                     _loginScreenState.value =
                         ScreenState.Success(data = Any())
                 }

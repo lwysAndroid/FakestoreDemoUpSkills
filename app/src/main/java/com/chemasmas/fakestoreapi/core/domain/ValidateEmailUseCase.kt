@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class ValidateEmailUseCase @Inject constructor() {
 
-    operator fun invoke(email: String): Flow<Boolean> = flow {
+    fun execute(email: String): Flow<Boolean> = flow {
         PatternsCompat.EMAIL_ADDRESS.matcher(email).matches()
             .also { emit(it) }
     }

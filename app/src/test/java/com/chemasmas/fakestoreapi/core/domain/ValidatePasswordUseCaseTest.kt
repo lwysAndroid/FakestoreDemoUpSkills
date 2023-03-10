@@ -10,14 +10,14 @@ class ValidatePasswordUseCaseTest {
 
     @Test
     fun `Empty password`() = runTest {
-        validatePasswordUseCase("").collectLatest {
+        validatePasswordUseCase.execute("").collectLatest {
             assertEquals(false, it)
         }
     }
 
     @Test
     fun `Correct password`() = runTest {
-        validatePasswordUseCase("1234ABC").collectLatest {
+        validatePasswordUseCase.execute("1234ABC").collectLatest {
             assertEquals(true, it)
         }
     }

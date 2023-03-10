@@ -7,9 +7,7 @@ import javax.inject.Inject
 class MakeLoginUseCase @Inject constructor(
     private val makeLoginRepository: MakeLoginRepository,
 ) {
-
-    operator fun invoke(email: String, password: String): Flow<Boolean> {
+    fun execute(email: String, password: String): Flow<Boolean> {
         return makeLoginRepository.makeLogin(email = email, password = password)
     }
-
 }
