@@ -2,23 +2,27 @@ package com.chemasmas.fakestoreapi.presentation.features.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.chemasmas.fakestoreapi.R
-import com.chemasmas.fakestoreapi.core.designSystem.components.InputType
-import com.chemasmas.fakestoreapi.core.designSystem.components.LoadingScreen
-import com.chemasmas.fakestoreapi.core.designSystem.components.TextInput
-import com.chemasmas.fakestoreapi.core.designSystem.models.ScreenState
 import com.chemasmas.fakestoreapi.core.designSystem.previewsConfig.PhonePreview
 import com.chemasmas.fakestoreapi.presentation.theme.FakeStoreAPiTheme
+import com.chemasmas.fakestoreapi.presentation.theme.Shapes
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 
@@ -26,99 +30,121 @@ import com.google.accompanist.insets.navigationBarsWithImePadding
 fun LoginScreenContainer(
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
-    val context = LocalContext.current
+    val state by viewModel.state.collectAsState()
 
-    val invalidEmailState = viewModel.invalidEmail.collectAsState().value
-    val invalidPasswordState = viewModel.invalidPassword.collectAsState().value
-
-    val loginScreenState = viewModel.loginScreenState.collectAsState().value
-
-    when (loginScreenState) {
-        is ScreenState.Loading -> {
-            LoadingScreen()
-        }
-        is ScreenState.Default -> {
-            LoginScreen(
-                doLogin = { email, password ->
-                    viewModel.makeLogin(
-                        email = email, password = password
-                    )
-                },
-                invalidEmailState = invalidEmailState,
-                invalidPasswordState = invalidPasswordState,
+    LoginScreen(
+        state = state,
+        doLogin = { email, password ->
+            viewModel.makeLogin(
+                email = email, password = password
             )
-        }
-        is ScreenState.Success -> {
-            Text(text = context.getString(R.string.next_screen))
-        }
-        is ScreenState.Error -> {
-            //TODO Handled Errors
-        }
-    }
+        },
+        doOnTyping = viewModel::userIsTyping
+    )
 
 }
 
 @Composable
 fun LoginScreen(
-    doLogin: (email: String, password: String) -> Unit = { _, _ -> },
-    invalidEmailState: Int = 0,
-    invalidPasswordState: Int = 0,
+    state: LoginViewModel.LoginState,
+    doLogin: (email: String, password: String) -> Unit,
+    doOnTyping: () -> Unit
 ) {
     val context = LocalContext.current
-    val passwordFocusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
 
-
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf(TextFieldValue("")) }
+    var password by remember { mutableStateOf(TextFieldValue("")) }
 
     ProvideWindowInsets {
-        Column(
-            Modifier
-                .navigationBarsWithImePadding()
-                .padding(24.dp)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(
-                16.dp, alignment = Alignment.CenterVertically
-            ),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            TextInput(InputType.Name, keyboardActions = KeyboardActions(onNext = {
-                passwordFocusRequester.requestFocus()
-            }), onValueChange = { value ->
-                email = value
-            })
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (state.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            } else {
+                Column(
+                    Modifier
+                        .navigationBarsWithImePadding()
+                        .padding(24.dp)
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(
+                        16.dp, alignment = Alignment.CenterVertically
+                    ),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    TextField(
+                        value = email,
+                        onValueChange = { newText ->
+                            email = newText
+                            doOnTyping()
+                        },
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color.White,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        ),
+                        leadingIcon = { Icon(imageVector = Icons.Default.Person, null) },
+                        label = { Text(text = context.getString(R.string.email)) },
+                        shape = Shapes.small,
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Next,
+                            keyboardType = KeyboardType.Email
+                        ),
+                    )
 
-            if (invalidEmailState != 0) {
-                Text(text = context.getString(invalidEmailState))
-            }
+                    state.errorUser?.let { Text(text = context.getString(it)) }
 
-            TextInput(InputType.Password,
-                keyboardActions = KeyboardActions(onDone = {
-                    focusManager.clearFocus()
-                    doLogin(email, password)
-                }),
-                focusRequester = passwordFocusRequester,
-                onValueChange = { value -> password = value })
+                    TextField(
+                        value = password,
+                        onValueChange = { newText ->
+                            password = newText
+                            doOnTyping()
+                        },
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color.White,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        ),
+                        leadingIcon = { Icon(imageVector = Icons.Default.Lock, null) },
+                        label = { Text(text = context.getString(R.string.password)) },
+                        shape = Shapes.small,
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Done,
+                            keyboardType = KeyboardType.Password
+                        ),
+                        keyboardActions = KeyboardActions(onDone = {
+                            focusManager.clearFocus()
+                            doLogin(email.text, password.text)
+                        }),
+                    )
 
-            if (invalidPasswordState != 0) {
-                Text(text = context.getString(invalidPasswordState))
-            }
+                    state.errorPassword?.let { Text(text = context.getString(it)) }
 
-            Button(onClick = {
-                doLogin(email, password)
-            }, modifier = Modifier.fillMaxWidth()) {
-                Text("SIGN IN", Modifier.padding(vertical = 8.dp))
-            }
-            Divider(
-                color = Color.White.copy(alpha = 0.3f),
-                thickness = 1.dp,
-                modifier = Modifier.padding(top = 48.dp)
-            )
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Don't have an account?", color = Color.White)
-                TextButton(onClick = {}) {
-                    Text("SING UP")
+                    Button(onClick = {
+                        doLogin(email.text, password.text)
+                    }, modifier = Modifier.fillMaxWidth()) {
+                        Text("SIGN IN", Modifier.padding(vertical = 8.dp))
+                    }
+                    state.errorService?.let { Text(text = it) }
+                    Divider(
+                        color = Color.White.copy(alpha = 0.3f),
+                        thickness = 1.dp,
+                        modifier = Modifier.padding(top = 48.dp)
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("Don't have an account?", color = Color.White)
+                        TextButton(onClick = {}) {
+                            Text("SING UP")
+                        }
+                    }
                 }
             }
         }
@@ -135,7 +161,9 @@ fun LoginScreenPreview() {
             color = MaterialTheme.colors.background
         ) {
             LoginScreen(
-                invalidEmailState = R.string.invalid_email
+                state = LoginViewModel.LoginState(),
+                doLogin = { _, _ -> },
+                doOnTyping = {}
             )
         }
     }

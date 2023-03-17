@@ -3,4 +3,6 @@
     <string name="invalid_email">The email doesn\'t accomplish with the format</string>
     <string name="invalid_password">The password is required</string>
     <string name="next_screen">Next Screen</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
 </resources>
