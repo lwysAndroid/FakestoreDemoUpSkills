@@ -3,7 +3,6 @@ package com.chemasmas.fakestoreapi.presentation.features.login
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import com.chemasmas.fakestoreapi.R
 import com.chemasmas.fakestoreapi.core.config.DispatchersSource
-import com.chemasmas.fakestoreapi.core.designSystem.models.ScreenState
 import com.chemasmas.fakestoreapi.core.domain.MakeLoginUseCase
 import com.chemasmas.fakestoreapi.core.domain.ValidateEmailUseCase
 import com.chemasmas.fakestoreapi.core.domain.ValidatePasswordUseCase
@@ -51,7 +50,7 @@ class LoginViewModelTest {
     fun `Login with empty email`() {
         viewModel.makeLogin(email = "", password = "")
         dispatcher.scheduler.advanceUntilIdle()
-        val invalidEmail = viewModel.invalidEmail.value
+        val invalidEmail = viewModel.state.value.errorUser
         assertEquals(R.string.invalid_email, invalidEmail)
     }
 
@@ -59,7 +58,7 @@ class LoginViewModelTest {
     fun `Login with invalid email`() {
         viewModel.makeLogin(email = "someEmail@gmail.", password = "")
         dispatcher.scheduler.advanceUntilIdle()
-        val invalidEmail = viewModel.invalidEmail.value
+        val invalidEmail = viewModel.state.value.errorUser
         assertEquals(R.string.invalid_email, invalidEmail)
     }
 
@@ -67,7 +66,7 @@ class LoginViewModelTest {
     fun `Login with empty password`() {
         viewModel.makeLogin(email = "someEmail@gmail.com", password = "")
         dispatcher.scheduler.advanceUntilIdle()
-        val invalidPassword = viewModel.invalidPassword.value
+        val invalidPassword = viewModel.state.value.errorPassword
         assertEquals(R.string.invalid_password, invalidPassword)
     }
 
@@ -75,9 +74,20 @@ class LoginViewModelTest {
     fun `Correct login`() {
         viewModel.makeLogin(email = "someEmail@gmail.com", password = "1234password")
         dispatcher.scheduler.advanceUntilIdle()
-        val successLogin = viewModel.loginScreenState.value
-        successLogin.javaClass
-        assertEquals(ScreenState.Success(Any()).javaClass, successLogin.javaClass)
+        val successLogin = viewModel.state.value.successLogin
+        assertEquals(true, successLogin)
+    }
+
+    @Test
+    fun `User is typing`() {
+        viewModel.makeLogin(email = "", password = "")
+        dispatcher.scheduler.advanceUntilIdle()
+        var invalidEmail = viewModel.state.value.errorUser
+        assertEquals(R.string.invalid_email, invalidEmail)
+        viewModel.userIsTyping()
+        dispatcher.scheduler.advanceUntilIdle()
+        invalidEmail = viewModel.state.value.errorUser
+        assertEquals(null, invalidEmail)
     }
 
 }

@@ -2,6 +2,7 @@ package com.chemasmas.fakestoreapi.presentation.features.countries
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chemasmas.fakestoreapi.core.config.DispatchersSource
 import com.chemasmas.fakestoreapi.core.data.repository.models.DetailedCountry
 import com.chemasmas.fakestoreapi.core.data.repository.models.SimpleCountry
 import com.chemasmas.fakestoreapi.core.domain.GetCountriesUseCase
@@ -15,6 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CountriesViewModel @Inject constructor(
+    private val dispatchersSource: DispatchersSource,
     private val getCountriesUseCase: GetCountriesUseCase,
     private val getCountryUseCase: GetCountryUseCase
 ) : ViewModel() {
@@ -23,7 +25,7 @@ class CountriesViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchersSource.io) {
             _state.update {
                 it.copy(
                     isLoading = true
@@ -39,7 +41,7 @@ class CountriesViewModel @Inject constructor(
     }
 
     fun selectCountry(code: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchersSource.io) {
             _state.update {
                 it.copy(
                     selectedCountry = getCountryUseCase.execute(code)
