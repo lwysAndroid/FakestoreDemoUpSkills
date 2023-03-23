@@ -26,7 +26,7 @@ import com.google.accompanist.insets.navigationBarsWithImePadding
 
 @Composable
 fun SignUpScreenContainer(
-    viewModel: SignUpViewModel = hiltViewModel()
+    viewModel: SignUpViewModel = hiltViewModel(), onSuccessSignUp: () -> Unit
 ) {
 
     val state by viewModel.state.collectAsState()
@@ -34,7 +34,8 @@ fun SignUpScreenContainer(
     SignUpScreen(
         state = state,
         doOnSignUp = {},
-        doUploadProfilePicture = {}
+        doUploadProfilePicture = {},
+        onSuccessSignUp = onSuccessSignUp
     )
 
 }
@@ -44,6 +45,7 @@ fun SignUpScreen(
     state: SignUpViewModel.SignUpState,
     doOnSignUp: () -> Unit,
     doUploadProfilePicture: () -> Unit,
+    onSuccessSignUp: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -80,15 +82,14 @@ fun SignUpScreen(
                 ) {
                     Title()
 
-                    TextFieldComponent(
-                        doOnChangeUserName = { value -> userName = value },
+                    TextFieldComponent(doOnChangeUserName = { value -> userName = value },
                         value = userName,
                         label = context.getString(R.string.user_name),
-                        error = state.errorUserName?.let { context.getString(it) }
-                    )
+                        error = state.errorUserName?.let { context.getString(it) })
 
                     Button(onClick = {
-                        doOnSignUp()
+//                        doOnSignUp()
+                        onSuccessSignUp()
                     }, modifier = Modifier.fillMaxWidth()) {
                         Text(context.getString(R.string.signup), Modifier.padding(vertical = 8.dp))
                     }
@@ -112,8 +113,7 @@ fun Title(
     ) {
 
         Row(
-            modifier = Modifier
-                .align(Alignment.Center),
+            modifier = Modifier.align(Alignment.Center),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -134,10 +134,7 @@ fun Title(
 
 @Composable
 fun TextFieldComponent(
-    doOnChangeUserName: (String) -> Unit,
-    value: String,
-    label: String,
-    error: String?
+    doOnChangeUserName: (String) -> Unit, value: String, label: String, error: String?
 ) {
     TextField(
         value = value,
@@ -153,8 +150,7 @@ fun TextFieldComponent(
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
         keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Next,
-            keyboardType = KeyboardType.Email
+            imeAction = ImeAction.Next, keyboardType = KeyboardType.Email
         ),
     )
 
@@ -166,14 +162,12 @@ fun TextFieldComponent(
 fun SignUpScreenPreview() {
     FakeStoreAPiTheme {
         Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colors.background
+            modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background
         ) {
-            SignUpScreen(
-                state = SignUpViewModel.SignUpState(),
+            SignUpScreen(state = SignUpViewModel.SignUpState(),
                 doOnSignUp = {},
-                doUploadProfilePicture = {}
-            )
+                doUploadProfilePicture = {},
+                onSuccessSignUp = {})
 
         }
     }

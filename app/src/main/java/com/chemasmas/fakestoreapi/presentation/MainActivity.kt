@@ -58,7 +58,11 @@ fun UpskillsApp() {
                         })
                 }
                 composable("signup") {
-                    SignUpScreenContainer()
+                    SignUpScreenContainer(
+                        onSuccessSignUp = {
+                            navController.navigateUp()
+                        }
+                    )
                 }
                 composable(route = "userList") {
                     UserListScreenContainer(
