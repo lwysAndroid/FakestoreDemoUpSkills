@@ -27,6 +27,11 @@ interface DataModule {
     ): UserListRepository
 
     @Binds
+    fun bindsUserDetailRepository(
+        userDetailRepository: UserDetailRepositoryImp
+    ): UserDetailRepository
+
+    @Binds
     fun bindsCountriesRepository(
         countriesRepository: CountriesRepositoryImp
     ): CountriesRepository

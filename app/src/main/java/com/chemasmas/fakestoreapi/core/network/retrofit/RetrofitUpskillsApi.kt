@@ -2,7 +2,9 @@ package com.chemasmas.fakestoreapi.core.network.retrofit
 
 import com.chemasmas.fakestoreapi.core.network.UpskillsNetworkDataSource
 import com.chemasmas.fakestoreapi.core.network.models.requests.UserDataLoginRequest
+import com.chemasmas.fakestoreapi.core.network.models.requests.UserDetailRequest
 import com.chemasmas.fakestoreapi.core.network.models.responses.TokenDataLoginResponse
+import com.chemasmas.fakestoreapi.core.network.models.responses.UserDetailResponse
 import com.chemasmas.fakestoreapi.core.network.models.responses.UserListResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -22,6 +24,12 @@ private interface RetrofitUpskillsApi {
 
     @GET(value = "account/list_users/")
     suspend fun getUserList(@Header("AUTHORIZATION") accessToken: String): UserListResponse
+
+    @POST(value = "account/details_users/")
+    suspend fun getUseDetail(
+        @Header("AUTHORIZATION") accessToken: String,
+        @Body userDetailRequest: UserDetailRequest
+    ): UserDetailResponse
 }
 
 private const val UPSKILLS_BASE_URL = "http://13.233.102.144:8000/"
@@ -51,6 +59,16 @@ class RetrofitUpskills @Inject constructor() : UpskillsNetworkDataSource {
 
     override suspend fun getUserList(accessToken: String): UserListResponse {
         return networkApi.getUserList(accessToken = accessToken)
+    }
+
+    override suspend fun getUserDetail(
+        accessToken: String,
+        userDetailRequest: UserDetailRequest
+    ): UserDetailResponse {
+        return networkApi.getUseDetail(
+            accessToken = accessToken,
+            userDetailRequest = userDetailRequest
+        )
     }
 
 
