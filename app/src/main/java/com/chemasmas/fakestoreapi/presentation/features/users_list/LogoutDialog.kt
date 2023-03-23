@@ -19,7 +19,8 @@ import com.chemasmas.fakestoreapi.core.designSystem.previewsConfig.PhonePreview
 @Composable
 fun LogoutDialog(
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    logout: () -> Unit
 ) {
     val context = LocalContext.current
     Dialog(
@@ -48,7 +49,7 @@ fun LogoutDialog(
             ) {
 
                 Button(
-                    onClick = { onDismiss.invoke() }, modifier = Modifier
+                    onClick = { logout.invoke() }, modifier = Modifier
                         .align(Alignment.CenterStart)
                         .width(width = 100.dp)
                 ) {
@@ -78,6 +79,7 @@ fun LogoutDialog(
 fun CountryDialogPreview() {
     LogoutDialog(
         onDismiss = {},
-        modifier = Modifier.background(color = Color.White)
+        modifier = Modifier.background(color = Color.White),
+        logout = {}
     )
 }

@@ -26,6 +26,10 @@ class UserListViewModel @Inject constructor(
         getUserList()
     }
 
+    fun clearState() {
+        _state.value = UsersListState()
+    }
+
     fun getUserList() {
         _state.update { userListState ->
             userListState.copy(

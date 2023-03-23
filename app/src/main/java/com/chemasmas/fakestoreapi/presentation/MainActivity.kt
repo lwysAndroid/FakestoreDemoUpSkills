@@ -48,9 +48,12 @@ fun UpskillsApp() {
                     })
                 }
                 composable(route = "userList") {
-                    UserListScreenContainer(onSelectUser = {id->
-                        navController.navigate("profileDetails")
-                    })
+                    UserListScreenContainer(
+                        onSelectUser = { id ->
+                            navController.navigate("profileDetails")
+                        },
+                        logout = { navController.navigate("login") }
+                    )
                 }
 
                 composable(route = "profileDetails") {

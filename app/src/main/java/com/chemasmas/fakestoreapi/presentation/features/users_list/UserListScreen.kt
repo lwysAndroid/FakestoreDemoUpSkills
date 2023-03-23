@@ -27,6 +27,7 @@ import com.chemasmas.fakestoreapi.presentation.theme.FakeStoreAPiTheme
 fun UserListScreenContainer(
     viewModel: UserListViewModel = hiltViewModel(),
     onSelectUser: (id: Int) -> Unit,
+    logout: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -35,7 +36,11 @@ fun UserListScreenContainer(
         onDismissLogout = viewModel::dismissLogoutDialog,
         onWantToLogout = viewModel::wantToLogout,
         performRetry = viewModel::getUserList,
-        onSelectUser = onSelectUser
+        onSelectUser = onSelectUser,
+        logout = {
+            viewModel.clearState()
+            logout.invoke()
+        }
     )
 
 }
@@ -47,6 +52,7 @@ fun UserListScreen(
     onWantToLogout: () -> Unit,
     performRetry: () -> Unit,
     onSelectUser: (id: Int) -> Unit,
+    logout: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -105,7 +111,7 @@ fun UserListScreen(
         )
 
         if (state.wantToLogout) {
-            LogoutDialog(onDismiss = onDismissLogout)
+            LogoutDialog(onDismiss = onDismissLogout, logout = logout)
         }
     }
 }
@@ -200,7 +206,8 @@ fun UserListScreenPreview() {
                 onDismissLogout = {},
                 onWantToLogout = {},
                 performRetry = {},
-                onSelectUser = {}
+                onSelectUser = {},
+                logout = {}
             )
         }
     }
@@ -218,7 +225,7 @@ fun UserListComponentPreview() {
                     userList = simpleUserListMock.subList(0, 5)
                 ),
                 performRetry = {},
-                onSelectUser = {}
+                onSelectUser = {},
             )
         }
     }
