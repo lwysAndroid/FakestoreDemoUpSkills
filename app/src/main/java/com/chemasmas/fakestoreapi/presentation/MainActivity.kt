@@ -15,6 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.chemasmas.fakestoreapi.presentation.features.login.LoginScreenContainer
 import com.chemasmas.fakestoreapi.presentation.features.profile_detail.ProfileDetailScreenContainer
+import com.chemasmas.fakestoreapi.presentation.features.signUp.SignUpScreenContainer
 import com.chemasmas.fakestoreapi.presentation.features.users_list.UserListScreenContainer
 import com.chemasmas.fakestoreapi.presentation.theme.FakeStoreAPiTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,7 +52,13 @@ fun UpskillsApp() {
                                 inclusive = true
                             }
                         }
-                    })
+                    },
+                        doOnGoSignup = {
+                            navController.navigate("signup")
+                        })
+                }
+                composable("signup") {
+                    SignUpScreenContainer()
                 }
                 composable(route = "userList") {
                     UserListScreenContainer(
@@ -59,7 +66,7 @@ fun UpskillsApp() {
                             navController.navigate("profileDetails/$id")
                         },
                         logout = {
-                            navController.navigate("login"){
+                            navController.navigate("login") {
                                 popUpTo("userList") {
                                     inclusive = true
                                 }

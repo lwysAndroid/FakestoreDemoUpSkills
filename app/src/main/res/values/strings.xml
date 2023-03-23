@@ -14,4 +14,8 @@
     <string name="retry">Retry</string>
     <string name="back">Back</string>
     <string name="user_info">User Info</string>
+    <string name="user_name">User Name</string>
+    <string name="signup">Sign up</string>
+    <string name="dont_have_an_account">Don\'t have an account?</string>
+    <string name="signin">SIGN IN</string>
 </resources>

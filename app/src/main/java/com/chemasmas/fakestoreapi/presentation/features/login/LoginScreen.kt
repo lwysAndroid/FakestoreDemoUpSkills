@@ -29,21 +29,21 @@ import com.google.accompanist.insets.navigationBarsWithImePadding
 @Composable
 fun LoginScreenContainer(
     viewModel: LoginViewModel = hiltViewModel(),
-    doOnLogin: () -> Unit
-) {
+    doOnLogin: () -> Unit,
+    doOnGoSignup: () -> Unit,
+
+    ) {
     val state by viewModel.state.collectAsState()
     if (state.successLogin == true) {
         doOnLogin.invoke()
         viewModel.refreshLoginSuccess()
     }
     LoginScreen(
-        state = state,
-        doLogin = { email, password ->
+        state = state, doLogin = { email, password ->
             viewModel.performLogin(
                 email = email, password = password
             )
-        },
-        doOnTyping = viewModel::userIsTyping
+        }, doOnTyping = viewModel::userIsTyping, doOnGoSignup = doOnGoSignup
     )
 
 }
@@ -52,7 +52,8 @@ fun LoginScreenContainer(
 fun LoginScreen(
     state: LoginViewModel.LoginState,
     doLogin: (email: String, password: String) -> Unit,
-    doOnTyping: () -> Unit
+    doOnTyping: () -> Unit,
+    doOnGoSignup: () -> Unit,
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -95,8 +96,7 @@ fun LoginScreen(
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Next,
-                            keyboardType = KeyboardType.Email
+                            imeAction = ImeAction.Next, keyboardType = KeyboardType.Email
                         ),
                     )
 
@@ -121,8 +121,7 @@ fun LoginScreen(
                         singleLine = true,
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Done,
-                            keyboardType = KeyboardType.Password
+                            imeAction = ImeAction.Done, keyboardType = KeyboardType.Password
                         ),
                         keyboardActions = KeyboardActions(onDone = {
                             focusManager.clearFocus()
@@ -135,7 +134,7 @@ fun LoginScreen(
                     Button(onClick = {
                         doLogin(email.text, password.text)
                     }, modifier = Modifier.fillMaxWidth()) {
-                        Text("SIGN IN", Modifier.padding(vertical = 8.dp))
+                        Text(context.getString(R.string.signin), Modifier.padding(vertical = 8.dp))
                     }
                     state.errorService?.let { Text(text = it) }
                     Divider(
@@ -144,9 +143,9 @@ fun LoginScreen(
                         modifier = Modifier.padding(top = 48.dp)
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Don't have an account?", color = Color.Gray)
-                        TextButton(onClick = {}) {
-                            Text("SING UP")
+                        Text(context.getString(R.string.dont_have_an_account), color = Color.Gray)
+                        TextButton(onClick = doOnGoSignup) {
+                            Text(context.getString(R.string.signup))
                         }
                     }
                 }
@@ -161,14 +160,12 @@ fun LoginScreen(
 fun LoginScreenPreview() {
     FakeStoreAPiTheme {
         Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colors.background
+            modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background
         ) {
-            LoginScreen(
-                state = LoginViewModel.LoginState(),
+            LoginScreen(state = LoginViewModel.LoginState(),
                 doLogin = { _, _ -> },
-                doOnTyping = {}
-            )
+                doOnTyping = {},
+                doOnGoSignup = {})
         }
     }
 }
@@ -178,14 +175,12 @@ fun LoginScreenPreview() {
 fun LoginScreenErrorEmailPreview() {
     FakeStoreAPiTheme {
         Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colors.background
+            modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background
         ) {
-            LoginScreen(
-                state = LoginViewModel.LoginState(errorUser = R.string.invalid_email),
+            LoginScreen(state = LoginViewModel.LoginState(errorUser = R.string.invalid_email),
                 doLogin = { _, _ -> },
-                doOnTyping = {}
-            )
+                doOnTyping = {},
+                doOnGoSignup = {})
         }
     }
 }
@@ -195,14 +190,12 @@ fun LoginScreenErrorEmailPreview() {
 fun LoginScreenErrorPasswordPreview() {
     FakeStoreAPiTheme {
         Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colors.background
+            modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background
         ) {
-            LoginScreen(
-                state = LoginViewModel.LoginState(errorPassword = R.string.invalid_password),
+            LoginScreen(state = LoginViewModel.LoginState(errorPassword = R.string.invalid_password),
                 doLogin = { _, _ -> },
-                doOnTyping = {}
-            )
+                doOnTyping = {},
+                doOnGoSignup = {})
         }
     }
 }
@@ -212,14 +205,12 @@ fun LoginScreenErrorPasswordPreview() {
 fun LoginScreenErrorServicePreview() {
     FakeStoreAPiTheme {
         Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colors.background
+            modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background
         ) {
-            LoginScreen(
-                state = LoginViewModel.LoginState(errorService = "HTTP 401 Unauthorized"),
+            LoginScreen(state = LoginViewModel.LoginState(errorService = "HTTP 401 Unauthorized"),
                 doLogin = { _, _ -> },
-                doOnTyping = {}
-            )
+                doOnTyping = {},
+                doOnGoSignup = {})
         }
     }
 }
