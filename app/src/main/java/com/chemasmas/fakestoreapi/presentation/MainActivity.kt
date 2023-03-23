@@ -46,7 +46,11 @@ fun UpskillsApp() {
             ) {
                 composable("login") {
                     LoginScreenContainer(doOnLogin = {
-                        navController.navigate("userList")
+                        navController.navigate("userList") {
+                            popUpTo("login") {
+                                inclusive = true
+                            }
+                        }
                     })
                 }
                 composable(route = "userList") {
@@ -54,7 +58,13 @@ fun UpskillsApp() {
                         onSelectUser = { id ->
                             navController.navigate("profileDetails/$id")
                         },
-                        logout = { navController.navigate("login") }
+                        logout = {
+                            navController.navigate("login"){
+                                popUpTo("userList") {
+                                    inclusive = true
+                                }
+                            }
+                        }
                     )
                 }
 
