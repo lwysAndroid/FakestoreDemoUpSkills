@@ -8,9 +8,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.chemasmas.fakestoreapi.presentation.features.login.LoginScreenContainer
 import com.chemasmas.fakestoreapi.presentation.features.profile_detail.ProfileDetailScreenContainer
 import com.chemasmas.fakestoreapi.presentation.features.users_list.UserListScreenContainer
@@ -50,16 +52,27 @@ fun UpskillsApp() {
                 composable(route = "userList") {
                     UserListScreenContainer(
                         onSelectUser = { id ->
-                            navController.navigate("profileDetails")
+                            navController.navigate("profileDetails/$id")
                         },
                         logout = { navController.navigate("login") }
                     )
                 }
 
-                composable(route = "profileDetails") {
-                    ProfileDetailScreenContainer(performOnBackButton = {
-                        navController.navigateUp()
-                    })
+                composable(
+                    route = "profileDetails/{userId}",
+                    arguments = listOf(
+                        navArgument(name = "userId") {
+                            type = NavType.IntType
+                        }
+                    )
+                ) {
+                    val userId = it.arguments?.getInt("userId")!!
+                    ProfileDetailScreenContainer(
+                        performOnBackButton = {
+                            navController.navigateUp()
+                        },
+                        userId = userId
+                    )
                 }
 
             }

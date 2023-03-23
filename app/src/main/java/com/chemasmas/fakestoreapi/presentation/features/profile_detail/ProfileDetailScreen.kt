@@ -29,12 +29,15 @@ import com.chemasmas.fakestoreapi.presentation.theme.FakeStoreAPiTheme
 fun ProfileDetailScreenContainer(
     viewModel: ProfileDetailViewModel = hiltViewModel(),
     performOnBackButton: () -> Unit,
+    userId: Int
 ) {
     val state by viewModel.state.collectAsState()
+    viewModel.getUserDetail(userId = userId)
+
     ProfileDetailScreen(
         state = state,
         performOnBackButton = performOnBackButton,
-        performRetry = viewModel::getUserDetail
+        performRetry = { viewModel.getUserDetail(userId = userId) }
     )
 }
 
