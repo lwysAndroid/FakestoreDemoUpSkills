@@ -101,7 +101,9 @@ fun SignUpScreen(
 }
 
 @Composable
-fun Title() {
+fun Title(
+    resourceTitle: Int = R.string.signup
+) {
     val context = LocalContext.current
     Box(
         modifier = Modifier
@@ -116,7 +118,7 @@ fun Title() {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = context.getString(R.string.signup),
+                text = context.getString(resourceTitle),
                 style = TextStyle(
                     fontSize = 20.sp,
                     fontFamily = FontFamily.Monospace,

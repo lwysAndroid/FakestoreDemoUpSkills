@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.chemasmas.fakestoreapi.R
 import com.chemasmas.fakestoreapi.core.designSystem.previewsConfig.PhonePreview
+import com.chemasmas.fakestoreapi.presentation.features.signUp.Title
 import com.chemasmas.fakestoreapi.presentation.theme.FakeStoreAPiTheme
 import com.chemasmas.fakestoreapi.presentation.theme.Shapes
 import com.google.accompanist.insets.ProvideWindowInsets
@@ -74,10 +75,12 @@ fun LoginScreen(
                         .padding(24.dp)
                         .fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(
-                        16.dp, alignment = Alignment.CenterVertically
+                        16.dp, alignment = Alignment.Top
                     ),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Title(resourceTitle = R.string.signin)
+                    Spacer(modifier = Modifier.height(40.dp))
                     TextField(
                         value = email,
                         onValueChange = { newText ->
