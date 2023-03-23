@@ -26,6 +26,7 @@ import com.chemasmas.fakestoreapi.presentation.theme.FakeStoreAPiTheme
 @Composable
 fun UserListScreenContainer(
     viewModel: UserListViewModel = hiltViewModel(),
+    onSelectUser: (id: Int) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -33,7 +34,8 @@ fun UserListScreenContainer(
         state = state,
         onDismissLogout = viewModel::dismissLogoutDialog,
         onWantToLogout = viewModel::wantToLogout,
-        performRetry = viewModel::getUserList
+        performRetry = viewModel::getUserList,
+        onSelectUser = onSelectUser
     )
 
 }
@@ -44,6 +46,7 @@ fun UserListScreen(
     onDismissLogout: () -> Unit,
     onWantToLogout: () -> Unit,
     performRetry: () -> Unit,
+    onSelectUser: (id: Int) -> Unit,
 ) {
 
     val context = LocalContext.current
@@ -97,7 +100,8 @@ fun UserListScreen(
 
         UserListComponent(
             state = state,
-            performRetry = performRetry
+            performRetry = performRetry,
+            onSelectUser = onSelectUser
         )
 
         if (state.wantToLogout) {
@@ -109,7 +113,8 @@ fun UserListScreen(
 @Composable
 fun UserListComponent(
     state: UserListViewModel.UsersListState,
-    performRetry: () -> Unit
+    performRetry: () -> Unit,
+    onSelectUser: (id: Int) -> Unit,
 ) {
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -127,11 +132,13 @@ fun UserListComponent(
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(state.userList) { user ->
-                    UserItem(user = user,
+                    UserItem(
+                        user = user,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { }
-                            .padding(16.dp))
+                            .clickable { user.id?.let { onSelectUser(it) } }//TODO handled nulls
+                            .padding(16.dp)
+                    )
                 }
             }
 
@@ -192,7 +199,8 @@ fun UserListScreenPreview() {
                 ),
                 onDismissLogout = {},
                 onWantToLogout = {},
-                performRetry = {}
+                performRetry = {},
+                onSelectUser = {}
             )
         }
     }
@@ -209,7 +217,8 @@ fun UserListComponentPreview() {
                 state = UserListViewModel.UsersListState(
                     userList = simpleUserListMock.subList(0, 5)
                 ),
-                performRetry = {}
+                performRetry = {},
+                onSelectUser = {}
             )
         }
     }

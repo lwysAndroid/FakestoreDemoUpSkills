@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.chemasmas.fakestoreapi.presentation.features.login.LoginScreenContainer
+import com.chemasmas.fakestoreapi.presentation.features.profile_detail.ProfileDetailScreenContainer
 import com.chemasmas.fakestoreapi.presentation.features.users_list.UserListScreenContainer
 import com.chemasmas.fakestoreapi.presentation.theme.FakeStoreAPiTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,17 +37,26 @@ fun UpskillsApp() {
         ) {
 
             val navController = rememberNavController()
+
             NavHost(
                 navController = navController,
                 startDestination = "login"
             ) {
                 composable("login") {
-                    LoginScreenContainer() {
+                    LoginScreenContainer(doOnLogin = {
                         navController.navigate("userList")
-                    }
+                    })
                 }
                 composable(route = "userList") {
-                    UserListScreenContainer()
+                    UserListScreenContainer(onSelectUser = {id->
+                        navController.navigate("profileDetails")
+                    })
+                }
+
+                composable(route = "profileDetails") {
+                    ProfileDetailScreenContainer(performOnBackButton = {
+                        navController.navigateUp()
+                    })
                 }
 
             }
