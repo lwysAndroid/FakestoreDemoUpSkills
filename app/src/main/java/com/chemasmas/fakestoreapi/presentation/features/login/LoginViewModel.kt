@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chemasmas.fakestoreapi.R
 import com.chemasmas.fakestoreapi.core.config.DispatchersSource
-import com.chemasmas.fakestoreapi.core.domain.MakeLoginUseCase
+import com.chemasmas.fakestoreapi.core.domain.PerformLoginUseCase
 import com.chemasmas.fakestoreapi.core.domain.ValidateEmailUseCase
 import com.chemasmas.fakestoreapi.core.domain.ValidatePasswordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,13 +20,13 @@ class LoginViewModel @Inject constructor(
     private val dispatchersSource: DispatchersSource,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
-    private val makeLoginUseCase: MakeLoginUseCase,
+    private val performLoginUseCase: PerformLoginUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LoginState())
     val state = _state.asStateFlow()
 
-    fun makeLogin(email: String, password: String) {
+    fun performLogin(email: String, password: String) {
         _state.value = LoginState(isLoading = true)
         viewModelScope.launch(dispatchersSource.io) {
             try {
@@ -52,7 +52,7 @@ class LoginViewModel @Inject constructor(
                     return@launch
                 }
 
-                makeLoginUseCase.execute(email = email, password = password).collectLatest {
+                performLoginUseCase.execute(email = email, password = password).collectLatest {
                     //TODO go to next screen
                     _state.value = LoginState(
                         isLoading = false,
@@ -73,6 +73,10 @@ class LoginViewModel @Inject constructor(
         _state.update {
             it.copy(errorUser = null, errorPassword = null)
         }
+    }
+
+    fun refreshLoginSuccess() {
+        _state.value = LoginState()
     }
 
     data class LoginState(

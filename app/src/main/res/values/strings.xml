@@ -5,4 +5,11 @@
     <string name="next_screen">Next Screen</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="user_list">User List</string>
+    <string name="logout">Logout</string>
+    <string name="confirm_logout">Are you sure you want to exit?</string>
+    <string name="confirm_logou">Are you sure you want to exit?</string>
+    <string name="yes">YES</string>
+    <string name="cancel">CANCEL</string>
+    <string name="retry">Retry</string>
 </resources>

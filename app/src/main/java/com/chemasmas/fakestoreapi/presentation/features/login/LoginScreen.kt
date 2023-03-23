@@ -29,13 +29,17 @@ import com.google.accompanist.insets.navigationBarsWithImePadding
 @Composable
 fun LoginScreenContainer(
     viewModel: LoginViewModel = hiltViewModel(),
+    doOnLogin: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
-
+    if (state.successLogin == true) {
+        doOnLogin.invoke()
+        viewModel.refreshLoginSuccess()
+    }
     LoginScreen(
         state = state,
         doLogin = { email, password ->
-            viewModel.makeLogin(
+            viewModel.performLogin(
                 email = email, password = password
             )
         },
@@ -135,12 +139,12 @@ fun LoginScreen(
                     }
                     state.errorService?.let { Text(text = it) }
                     Divider(
-                        color = Color.White.copy(alpha = 0.3f),
+                        color = Color.Gray.copy(alpha = 0.3f),
                         thickness = 1.dp,
                         modifier = Modifier.padding(top = 48.dp)
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Don't have an account?", color = Color.White)
+                        Text("Don't have an account?", color = Color.Gray)
                         TextButton(onClick = {}) {
                             Text("SING UP")
                         }
@@ -162,6 +166,57 @@ fun LoginScreenPreview() {
         ) {
             LoginScreen(
                 state = LoginViewModel.LoginState(),
+                doLogin = { _, _ -> },
+                doOnTyping = {}
+            )
+        }
+    }
+}
+
+@PhonePreview
+@Composable
+fun LoginScreenErrorEmailPreview() {
+    FakeStoreAPiTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colors.background
+        ) {
+            LoginScreen(
+                state = LoginViewModel.LoginState(errorUser = R.string.invalid_email),
+                doLogin = { _, _ -> },
+                doOnTyping = {}
+            )
+        }
+    }
+}
+
+@PhonePreview
+@Composable
+fun LoginScreenErrorPasswordPreview() {
+    FakeStoreAPiTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colors.background
+        ) {
+            LoginScreen(
+                state = LoginViewModel.LoginState(errorPassword = R.string.invalid_password),
+                doLogin = { _, _ -> },
+                doOnTyping = {}
+            )
+        }
+    }
+}
+
+@PhonePreview
+@Composable
+fun LoginScreenErrorServicePreview() {
+    FakeStoreAPiTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colors.background
+        ) {
+            LoginScreen(
+                state = LoginViewModel.LoginState(errorService = "HTTP 401 Unauthorized"),
                 doLogin = { _, _ -> },
                 doOnTyping = {}
             )

@@ -71,6 +71,8 @@ dependencies {
     implementation 'com.google.accompanist:accompanist-insets:0.23.1'
     //apollo
     implementation 'com.apollographql.apollo3:apollo-runtime:3.7.3'
+    //coil
+    implementation "io.coil-kt:coil-compose:2.2.2"
 
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
