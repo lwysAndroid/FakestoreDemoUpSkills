@@ -6,6 +6,7 @@ import javax.inject.Inject
 
 class ValidatePasswordUseCase @Inject constructor() {
     fun execute(password: String): Flow<Boolean> = flow {
-        emit(password.isNotEmpty())
+        val isValid = password.isNotEmpty() && password.length >= 5
+        emit(isValid)
     }
 }
