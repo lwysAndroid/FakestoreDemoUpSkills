@@ -4,5 +4,5 @@ import com.chemasmas.fakestoreapi.core.network.models.responses.UserListResponse
 import kotlinx.coroutines.flow.Flow
 
 interface UserListRepository {
-    fun getUserList(): Flow<UserListResponse>
+    suspend fun getUserList(): UserListResponse
 }

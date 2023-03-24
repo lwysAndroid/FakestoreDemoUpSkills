@@ -47,6 +47,11 @@ interface DataModule {
     ): UserDetailRepository
 
     @Binds
+    fun bindsRefreshTokenRepository(
+        refreshTokenRepository: RefreshTokenRepositoryImp
+    ): RefreshTokenRepository
+
+    @Binds
     fun bindsCountriesRepository(
         countriesRepository: CountriesRepositoryImp
     ): CountriesRepository

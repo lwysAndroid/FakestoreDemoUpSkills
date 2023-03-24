@@ -2,12 +2,10 @@ package com.chemasmas.fakestoreapi.core.network.retrofit
 
 import com.chemasmas.fakestoreapi.core.network.UpskillsNetworkDataSource
 import com.chemasmas.fakestoreapi.core.network.models.requests.CreateUserRequest
+import com.chemasmas.fakestoreapi.core.network.models.requests.RefreshTokenRequest
 import com.chemasmas.fakestoreapi.core.network.models.requests.UserDataLoginRequest
 import com.chemasmas.fakestoreapi.core.network.models.requests.UserDetailRequest
-import com.chemasmas.fakestoreapi.core.network.models.responses.CreateUserResponse
-import com.chemasmas.fakestoreapi.core.network.models.responses.TokenDataLoginResponse
-import com.chemasmas.fakestoreapi.core.network.models.responses.UserDetailResponse
-import com.chemasmas.fakestoreapi.core.network.models.responses.UserListResponse
+import com.chemasmas.fakestoreapi.core.network.models.responses.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -37,6 +35,12 @@ private interface RetrofitUpskillsApi {
     suspend fun createUser(
         @Body createUserRequest: CreateUserRequest
     ): CreateUserResponse
+
+    @POST(value = "/refresh_token/")
+    suspend fun refreshToken(
+        @Header("AUTHORIZATION") accessToken: String,
+        @Body refreshTokenRequest: RefreshTokenRequest
+    ): RefreshTokenResponse
 }
 
 private const val UPSKILLS_BASE_URL = "http://13.233.102.144:8000/"
@@ -80,6 +84,16 @@ class RetrofitUpskills @Inject constructor() : UpskillsNetworkDataSource {
 
     override suspend fun createUser(createUserRequest: CreateUserRequest): CreateUserResponse {
         return networkApi.createUser(createUserRequest = createUserRequest)
+    }
+
+    override suspend fun refreshToken(
+        accessToken: String,
+        refreshTokenRequest: RefreshTokenRequest
+    ): RefreshTokenResponse {
+        return networkApi.refreshToken(
+            accessToken = accessToken,
+            refreshTokenRequest = refreshTokenRequest
+        )
     }
 
 }
