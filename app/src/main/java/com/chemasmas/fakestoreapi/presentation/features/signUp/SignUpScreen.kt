@@ -29,6 +29,10 @@ fun SignUpScreenContainer(
 ) {
 
     val state by viewModel.state.collectAsState()
+    if (state.successSignUp == true) {
+        viewModel.resetState()
+        onSuccessSignUp()
+    }
 
     SignUpScreen(
         state = state,

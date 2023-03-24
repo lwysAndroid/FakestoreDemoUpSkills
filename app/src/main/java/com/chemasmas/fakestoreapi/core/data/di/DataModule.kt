@@ -13,8 +13,13 @@ interface DataModule {
 
     @Binds
     fun bindsPerformLoginRepository(
-        makeLoginRepository: PerformLoginRepositoryImp
+        performLoginRepository: PerformLoginRepositoryImp
     ): PerformLoginRepository
+
+    @Binds
+    fun bindsCreateUserRepository(
+        createUserRepository: CreateUserRepositoryImp
+    ): CreateUserRepository
 
     @Binds
     fun bindsTokensRepository(

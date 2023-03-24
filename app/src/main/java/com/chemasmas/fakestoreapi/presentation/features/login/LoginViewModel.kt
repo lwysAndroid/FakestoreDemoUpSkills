@@ -29,29 +29,29 @@ class LoginViewModel @Inject constructor(
     fun performLogin(email: String, password: String) {
         _state.value = LoginState(isLoading = true)
         viewModelScope.launch(dispatchersSource.io) {
+
+            var isValidEmail = false
+            validateEmailUseCase.execute(email).collect() {
+                isValidEmail = it
+            }
+            if (isValidEmail.not()) {
+                _state.value = LoginState(
+                    isLoading = false,
+                    errorUser = R.string.invalid_email
+                )
+                return@launch
+            }
+
+            var isValidPassword = false
+            validatePasswordUseCase.execute(password).collectLatest {
+                isValidPassword = it
+            }
+            if (isValidPassword.not()) {
+                _state.value =
+                    LoginState(isLoading = false, errorPassword = R.string.invalid_password)
+                return@launch
+            }
             try {
-                var isValidEmail = false
-                validateEmailUseCase.execute(email).collect() {
-                    isValidEmail = it
-                }
-                if (isValidEmail.not()) {
-                    _state.value = LoginState(
-                        isLoading = false,
-                        errorUser = R.string.invalid_email
-                    )
-                    return@launch
-                }
-
-                var isValidPassword = false
-                validatePasswordUseCase.execute(password).collectLatest {
-                    isValidPassword = it
-                }
-                if (isValidPassword.not()) {
-                    _state.value =
-                        LoginState(isLoading = false, errorPassword = R.string.invalid_password)
-                    return@launch
-                }
-
                 performLoginUseCase.execute(email = email, password = password).collectLatest {
                     //TODO go to next screen
                     _state.value = LoginState(

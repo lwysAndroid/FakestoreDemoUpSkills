@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chemasmas.fakestoreapi.R
 import com.chemasmas.fakestoreapi.core.config.DispatchersSource
+import com.chemasmas.fakestoreapi.core.domain.CreateUserUseCase
 import com.chemasmas.fakestoreapi.core.domain.ValidateEmailUseCase
 import com.chemasmas.fakestoreapi.core.domain.ValidatePasswordUseCase
 import com.chemasmas.fakestoreapi.core.domain.ValidateUserNameUseCase
+import com.chemasmas.fakestoreapi.core.network.models.requests.CreateUserRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,6 +23,7 @@ class SignUpViewModel @Inject constructor(
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
     private val validateUserNameUseCase: ValidateUserNameUseCase,
+    private val createUserUseCase: CreateUserUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SignUpState())
@@ -35,7 +38,7 @@ class SignUpViewModel @Inject constructor(
         profileIcon: String,
     ) {
         _state.update {
-            it.copy(isLoading = true, errorsFieldsSignUp = null)
+            it.copy(isLoading = true, errorsFieldsSignUp = null, errorService = null)
         }
 
         viewModelScope.launch(dispatchersSource.io) {
@@ -71,28 +74,57 @@ class SignUpViewModel @Inject constructor(
                     || !isValidLastName
             if (hasErrors) {
                 val errorsFieldsSignUp = ErrorsFieldsSignUp()
-                errorsFieldsSignUp.errorUserName = if(!isValidUserName) R.string.invalid_user_name else null
-                errorsFieldsSignUp.errorEmail = if(!isValidEmail) R.string.invalid_email else null
-                errorsFieldsSignUp.errorPassword = if(!isValidPassword) R.string.invalid_password else null
-                errorsFieldsSignUp.errorFirstName = if(!isValidFirstName) R.string.invalid_first_name else null
-                errorsFieldsSignUp.errorLastName = if(!isValidLastName) R.string.invalid_last_name else null
+                errorsFieldsSignUp.errorUserName =
+                    if (!isValidUserName) R.string.invalid_user_name else null
+                errorsFieldsSignUp.errorEmail = if (!isValidEmail) R.string.invalid_email else null
+                errorsFieldsSignUp.errorPassword =
+                    if (!isValidPassword) R.string.invalid_password else null
+                errorsFieldsSignUp.errorFirstName =
+                    if (!isValidFirstName) R.string.invalid_first_name else null
+                errorsFieldsSignUp.errorLastName =
+                    if (!isValidLastName) R.string.invalid_last_name else null
                 _state.update {
                     it.copy(isLoading = false, errorsFieldsSignUp = errorsFieldsSignUp)
                 }
 
             } else {
                 _state.update {
-                    it.copy(isLoading = false, errorsFieldsSignUp = null)
+                    it.copy(errorsFieldsSignUp = null)
                 }
+                try {
+                    val createUserRequest = CreateUserRequest(
+                        username = userName,
+                        password = password,
+                        email = email,
+                        firstName = firstName,
+                        lastName = lastName,
+                        profileIcon = profileIcon,
+                    )
+                    createUserUseCase.execute(createUserRequest).collectLatest {
+                        _state.update {
+                            it.copy(isLoading = false, successSignUp = true)
+                        }
+                    }
+
+                } catch (exc: Exception) {
+                    _state.update {
+                        it.copy(isLoading = false, errorService = exc.message)
+                    }
+                }
+
             }
 
         }
 
     }
 
+    fun resetState() {
+        _state.value = SignUpState()
+    }
 
     data class SignUpState(
         val isLoading: Boolean = false,
+        val successSignUp: Boolean? = null,
         val errorService: String? = null,
         val errorsFieldsSignUp: ErrorsFieldsSignUp? = null,
     )

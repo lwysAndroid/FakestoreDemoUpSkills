@@ -1,8 +1,10 @@
 package com.chemasmas.fakestoreapi.core.network.retrofit
 
 import com.chemasmas.fakestoreapi.core.network.UpskillsNetworkDataSource
+import com.chemasmas.fakestoreapi.core.network.models.requests.CreateUserRequest
 import com.chemasmas.fakestoreapi.core.network.models.requests.UserDataLoginRequest
 import com.chemasmas.fakestoreapi.core.network.models.requests.UserDetailRequest
+import com.chemasmas.fakestoreapi.core.network.models.responses.CreateUserResponse
 import com.chemasmas.fakestoreapi.core.network.models.responses.TokenDataLoginResponse
 import com.chemasmas.fakestoreapi.core.network.models.responses.UserDetailResponse
 import com.chemasmas.fakestoreapi.core.network.models.responses.UserListResponse
@@ -30,6 +32,11 @@ private interface RetrofitUpskillsApi {
         @Header("AUTHORIZATION") accessToken: String,
         @Body userDetailRequest: UserDetailRequest
     ): UserDetailResponse
+
+    @POST(value = "/account/create_user/")
+    suspend fun createUser(
+        @Body createUserRequest: CreateUserRequest
+    ): CreateUserResponse
 }
 
 private const val UPSKILLS_BASE_URL = "http://13.233.102.144:8000/"
@@ -71,5 +78,8 @@ class RetrofitUpskills @Inject constructor() : UpskillsNetworkDataSource {
         )
     }
 
+    override suspend fun createUser(createUserRequest: CreateUserRequest): CreateUserResponse {
+        return networkApi.createUser(createUserRequest = createUserRequest)
+    }
 
 }
