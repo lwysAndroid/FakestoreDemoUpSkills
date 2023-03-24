@@ -17,6 +17,16 @@ interface DataModule {
     ): PerformLoginRepository
 
     @Binds
+    fun bindsValidateSessionRepository(
+        validateSessionRepository: ValidateSessionRepositoryImp
+    ): ValidateSessionRepository
+
+    @Binds
+    fun bindsCloseSessionRepository(
+        closeSessionRepository: CloseSessionRepositoryImp
+    ): CloseSessionRepository
+
+    @Binds
     fun bindsCreateUserRepository(
         createUserRepository: CreateUserRepositoryImp
     ): CreateUserRepository

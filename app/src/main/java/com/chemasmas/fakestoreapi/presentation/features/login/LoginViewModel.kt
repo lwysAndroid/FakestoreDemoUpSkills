@@ -7,6 +7,7 @@ import com.chemasmas.fakestoreapi.core.config.DispatchersSource
 import com.chemasmas.fakestoreapi.core.domain.PerformLoginUseCase
 import com.chemasmas.fakestoreapi.core.domain.ValidateEmailUseCase
 import com.chemasmas.fakestoreapi.core.domain.ValidatePasswordUseCase
+import com.chemasmas.fakestoreapi.core.domain.ValidateSessionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,10 +22,23 @@ class LoginViewModel @Inject constructor(
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
     private val performLoginUseCase: PerformLoginUseCase,
+    private val validateSessionUseCase: ValidateSessionUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LoginState())
     val state = _state.asStateFlow()
+
+    fun validateSession() {
+        viewModelScope.launch(dispatchersSource.io) {
+            validateSessionUseCase.execute().collectLatest { hasSession ->
+                if (hasSession) {
+                    _state.update {
+                        it.copy(hasSession = true)
+                    }
+                }
+            }
+        }
+    }
 
     fun performLogin(email: String, password: String) {
         _state.value = LoginState(isLoading = true)
@@ -53,11 +67,9 @@ class LoginViewModel @Inject constructor(
             }
             try {
                 performLoginUseCase.execute(email = email, password = password).collectLatest {
-                    //TODO go to next screen
                     _state.value = LoginState(
                         isLoading = false,
-                        successLogin = true,
-                        errorService = "Success Login"
+                        successLogin = true
                     )
                 }
 
@@ -81,6 +93,7 @@ class LoginViewModel @Inject constructor(
 
     data class LoginState(
         val isLoading: Boolean = false,
+        val hasSession: Boolean? = null,
         val errorUser: Int? = null,
         val errorPassword: Int? = null,
         val errorService: String? = null,

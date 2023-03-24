@@ -38,6 +38,7 @@ fun UserListScreenContainer(
         performRetry = viewModel::getUserList,
         onSelectUser = onSelectUser,
         logout = {
+            viewModel.clearTokens()
             viewModel.clearState()
             logout.invoke()
         }

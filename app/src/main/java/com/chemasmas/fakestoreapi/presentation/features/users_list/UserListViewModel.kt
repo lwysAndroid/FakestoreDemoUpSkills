@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chemasmas.fakestoreapi.core.config.DispatchersSource
 import com.chemasmas.fakestoreapi.core.data.repository.models.SimpleUser
+import com.chemasmas.fakestoreapi.core.domain.CloseSessionUseCase
 import com.chemasmas.fakestoreapi.core.domain.GetUserListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +18,7 @@ import javax.inject.Inject
 class UserListViewModel @Inject constructor(
     private val dispatchersSource: DispatchersSource,
     private val getUserListUseCase: GetUserListUseCase,
+    private val closeSessionUseCase: CloseSessionUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(UsersListState())
@@ -24,6 +26,14 @@ class UserListViewModel @Inject constructor(
 
     init {
         getUserList()
+    }
+
+    fun clearTokens() {
+        viewModelScope.launch(dispatchersSource.io) {
+            closeSessionUseCase.execute().collectLatest {
+
+            }
+        }
     }
 
     fun clearState() {

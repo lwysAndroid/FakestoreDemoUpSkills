@@ -32,12 +32,19 @@ fun LoginScreenContainer(
     viewModel: LoginViewModel = hiltViewModel(),
     doOnLogin: () -> Unit,
     doOnGoSignup: () -> Unit,
-
-    ) {
+) {
     val state by viewModel.state.collectAsState()
-    if (state.successLogin == true) {
+
+    if (state.hasSession == true ) {
         doOnLogin.invoke()
         viewModel.refreshLoginSuccess()
+    }
+    if (state.successLogin == true ) {
+        doOnLogin.invoke()
+        viewModel.refreshLoginSuccess()
+    }
+    LaunchedEffect(key1 = viewModel) {
+        viewModel.validateSession()
     }
     LoginScreen(
         state = state, doLogin = { email, password ->
