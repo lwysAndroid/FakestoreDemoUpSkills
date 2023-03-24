@@ -24,4 +24,7 @@
     <string name="invalid_last_name">Invalid Last name</string>
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
+    <string name="preference_tokens_key">preference_tokens_key</string>
+    <string name="refresh_token">refreash_token</string>
+    <string name="access_token">access_token</string>
 </resources>
