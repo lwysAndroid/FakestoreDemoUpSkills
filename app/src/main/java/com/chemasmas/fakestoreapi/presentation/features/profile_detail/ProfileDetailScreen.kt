@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -32,7 +33,9 @@ fun ProfileDetailScreenContainer(
     userId: Int
 ) {
     val state by viewModel.state.collectAsState()
-    viewModel.getUserDetail(userId = userId)
+    LaunchedEffect(key1 = viewModel) {
+        viewModel.getUserDetail(userId = userId)
+    }
 
     ProfileDetailScreen(
         state = state,
